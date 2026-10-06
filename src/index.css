@@ -1,0 +1,27 @@
+:root {
+  font-family: "Pretendard", "Noto Sans KR", system-ui, -apple-system, sans-serif;
+  color: #1f2937;
+  background: #f7f8fc;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-width: 320px;
+  margin: 0;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
