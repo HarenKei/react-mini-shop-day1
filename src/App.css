@@ -108,7 +108,12 @@
 }
 
 :root {
-  font-family: "Pretendard", "Noto Sans KR", system-ui, -apple-system, sans-serif;
+  font-family:
+    "Pretendard",
+    "Noto Sans KR",
+    system-ui,
+    -apple-system,
+    sans-serif;
   color: #1f2937;
   background: #f7f8fc;
   font-synthesis: none;
@@ -276,4 +281,139 @@ button {
   .filter-panel {
     grid-template-columns: 1fr;
   }
+}
+.cart-section {
+  margin-top: 48px;
+}
+
+.cart-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cart-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 20px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.cart-item + .cart-item {
+  margin-top: 10px;
+}
+
+.cart-item p {
+  margin: 6px 0 0;
+  color: #6b7280;
+}
+
+.quantity-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  white-space: nowrap;
+}
+
+.quantity-controls button {
+  width: 36px;
+  height: 36px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.cart-total {
+  margin: 18px 0 0;
+  text-align: right;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+@media (max-width: 640px) {
+  .cart-item {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+.order-section {
+  margin-top: 48px;
+}
+.order-layout {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+.order-form,
+.order-summary {
+  padding: 24px;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  background: #fff;
+}
+.order-form label {
+  display: block;
+  margin: 14px 0 6px;
+  font-weight: 700;
+}
+.order-form input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+}
+.order-form input[aria-invalid="true"] {
+  border-color: #dc2626;
+}
+.order-form button {
+  margin-top: 20px;
+  padding: 11px 18px;
+  border: 0;
+  border-radius: 9px;
+  background: #6d28d9;
+  color: #fff;
+}
+.form-error {
+  color: #b91c1c;
+}
+.form-success {
+  color: #166534;
+}
+.order-summary ul {
+  padding: 0;
+  list-style: none;
+}
+.order-summary li {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+.order-total {
+  text-align: right;
+  font-weight: 700;
+}
+@media (max-width: 640px) {
+  .order-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.api-status {
+  margin: 16px 0 24px;
+  padding: 16px 20px;
+  border-radius: 12px;
+  background: #f5f3ff;
+  color: #4c1d95;
+}
+
+.api-error {
+  background: #fef2f2;
+  color: #b91c1c;
 }

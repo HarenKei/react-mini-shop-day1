@@ -1,5 +1,10 @@
 :root {
-  font-family: "Pretendard", "Noto Sans KR", system-ui, -apple-system, sans-serif;
+  font-family:
+    "Pretendard",
+    "Noto Sans KR",
+    system-ui,
+    -apple-system,
+    sans-serif;
   color: #1f2937;
   background: #f7f8fc;
   font-synthesis: none;
