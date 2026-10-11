@@ -17,6 +17,12 @@ function App() {
   });
   const [wasSubmitted, setWasSubmitted] = useState(false);
 
+  const [loginForm, setLoginForm] = useState({ userid: "", password: "" });
+  const [accessToken, setAccessToken] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [loginError, setLoginError] = useState("");
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+
   const featuredProduct = products[0];
   const categories = [
     "전체",
@@ -119,6 +125,65 @@ function App() {
     setWasSubmitted(true);
   }
 
+  function handleLoginChange(event) {
+    const { name, value } = event.target;
+    setLoginForm((current) => ({ ...current, [name]: value }));
+  }
+
+  async function handleLoginSubmit(event) {
+    event.preventDefault();
+    setLoginError("");
+
+    if (!loginForm.userid.trim() || !loginForm.password) {
+      setLoginError("아이디와 비밀번호를 입력해 주세요.");
+      return;
+    }
+
+    setIsLoggingIn(true);
+    try {
+      const response = await fetch("http://127.0.0.1:8000/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(loginForm),
+      });
+
+      if (!response.ok) {
+        throw new Error(
+          response.status === 401
+            ? "아이디 또는 비밀번호가 올바르지 않습니다."
+            : `로그인 요청 실패 (${response.status})`,
+        );
+      }
+
+      const { access_token: token } = await response.json();
+      const meResponse = await fetch("http://127.0.0.1:8000/me", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (!meResponse.ok) {
+        throw new Error("로그인 상태를 확인하지 못했습니다.");
+      }
+
+      const user = await meResponse.json();
+      setAccessToken(token);
+      setCurrentUser(user);
+      setLoginForm((current) => ({ ...current, password: "" }));
+    } catch (error) {
+      setAccessToken(null);
+      setCurrentUser(null);
+      setLoginError(error.message);
+      setLoginForm((current) => ({ ...current, password: "" }));
+    } finally {
+      setIsLoggingIn(false);
+    }
+  }
+
+  function handleLogout() {
+    setAccessToken(null);
+    setCurrentUser(null);
+    setLoginError("");
+  }
+
   const cartCount = cartItems.reduce((count, item) => count + item.quantity, 0);
   const cartTotal = cartItems.reduce((total, item) => {
     const product = products.find((entry) => entry.id === item.productId);
@@ -141,6 +206,52 @@ function App() {
         <h1>{shopName}</h1>
         <span>취향에 맞는 물건을 찾아보세요.</span>
       </header>
+
+      <section className="auth-section" aria-labelledby="auth-title">
+        <h2 id="auth-title">고객 로그인</h2>
+        {accessToken && currentUser ? (
+          <div className="auth-signed-in">
+            <p>
+              <strong>{currentUser.name}</strong>님, 환영합니다.
+            </p>
+            <button type="button" onClick={handleLogout}>
+              로그아웃
+            </button>
+          </div>
+        ) : (
+          <form className="auth-form" noValidate onSubmit={handleLoginSubmit}>
+            <div>
+              <label htmlFor="login-userid">아이디</label>
+              <input
+                id="login-userid"
+                name="userid"
+                autoComplete="username"
+                value={loginForm.userid}
+                onChange={handleLoginChange}
+              />
+            </div>
+            <div>
+              <label htmlFor="login-password">비밀번호</label>
+              <input
+                id="login-password"
+                name="password"
+                type="password"
+                autoComplete="current-password"
+                value={loginForm.password}
+                onChange={handleLoginChange}
+              />
+            </div>
+            <button type="submit" disabled={isLoggingIn}>
+              {isLoggingIn ? "확인 중..." : "로그인"}
+            </button>
+            {loginError && (
+              <p className="form-error" role="alert">
+                {loginError}
+              </p>
+            )}
+          </form>
+        )}
+      </section>
 
       <section className="featured-section">
         <h2>오늘의 추천 상품</h2>
