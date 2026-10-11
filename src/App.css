@@ -528,3 +528,11 @@ button {
 .order-form input[readonly] {
   background: #f5f3ff;
 }
+
+.shop-nav a.active {
+  background: #0f766e;
+  border-color: #0f766e;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}

@@ -1,6 +1,14 @@
 # React 쇼핑몰 프로젝트(3)
 
-3일차 기본 완성본입니다. JWT 로그인, 인증된 주문 저장, 화면 이동과 회원 정보 불러오기를 구현했습니다.
+3교시 응용: 기존 NavLink의 현재 메뉴에 체크 표시, 색상과 밑줄을 적용합니다. 공유 상태와 루트 링크의 end를 유지합니다.
+
+## 응용 기준
+
+브랜치: `codex/day3-lesson10-active-menu`
+
+기준 커밋: [3d9fccc16132356bb165feeb0806f9a0b84bdab1](https://github.com/HarenKei/react-mini-shop-day1/commit/3d9fccc16132356bb165feeb0806f9a0b84bdab1)
+
+해당 교시 기본 완료 코드에서 이 응용의 표시 변경만 추가했습니다. 기본 코드로 돌아갈 때는 위 기준 커밋을 사용합니다.
 
 ## 강의자료와 시작 기준
 
