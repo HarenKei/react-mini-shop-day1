@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import "./App.css";
+import OrderSuccessCard from "./components/OrderSuccessCard";
 import ProductCard from "./components/ProductCard";
 
 function App() {
@@ -487,12 +488,7 @@ function App() {
                 {orderError}
               </p>
             )}
-            {orderResult && (
-              <p className="form-success" role="status">
-                주문 #{orderResult.order_id} 저장 완료 · 총액{" "}
-                {orderResult.total_price.toLocaleString()}원
-              </p>
-            )}
+            <OrderSuccessCard result={orderResult} />
           </form>
 
           <div className="order-summary">

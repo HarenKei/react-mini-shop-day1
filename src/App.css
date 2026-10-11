@@ -473,3 +473,15 @@ button {
   opacity: 0.6;
   cursor: wait;
 }
+
+.order-success-card {
+  margin-top: 20px;
+  padding: 16px;
+  border: 2px solid #166534;
+  border-radius: 12px;
+  background: #ecfdf5;
+  color: #166534;
+}
+.order-success-card h3 {
+  margin: 0 0 12px;
+}

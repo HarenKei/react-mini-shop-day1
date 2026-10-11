@@ -1,6 +1,14 @@
 # React 쇼핑몰 프로젝트(3)
 
-2교시 완료 코드입니다. 로그인한 고객의 주문과 판매 행, 재고를 트랜잭션으로 저장합니다. 주문자는 이름과 이메일을 입력합니다.
+2교시 응용: 기존 orderResult를 Props로 전달해 주문번호와 서버 총액을 카드로 표시합니다. 비워진 장바구니에서 총액을 다시 계산하지 않습니다.
+
+## 응용 기준
+
+브랜치: `codex/day3-lesson9-order-card`
+
+기준 커밋: [88c4eb6cf0725cf1deecfdb2bddb9610fe41e442](https://github.com/HarenKei/react-mini-shop-day1/commit/88c4eb6cf0725cf1deecfdb2bddb9610fe41e442)
+
+해당 교시 기본 완료 코드에서 이 응용의 표시 변경만 추가했습니다. 기본 코드로 돌아갈 때는 위 기준 커밋을 사용합니다.
 
 ## 강의자료와 시작 기준
 
