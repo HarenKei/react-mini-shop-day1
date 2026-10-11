@@ -14,7 +14,6 @@ function App() {
   const [orderForm, setOrderForm] = useState({
     name: "",
     email: "",
-    emailConfirm: "",
   });
   const [wasSubmitted, setWasSubmitted] = useState(false);
 
@@ -78,9 +77,7 @@ function App() {
 
   function addToCart(productId) {
     setCartItems((currentItems) => {
-      const existingItem = currentItems.find(
-        (item) => item.productId === productId,
-      );
+      const existingItem = currentItems.find((item) => item.productId === productId);
 
       if (existingItem) {
         return currentItems.map((item) =>
@@ -133,10 +130,6 @@ function App() {
     email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(orderForm.email.trim())
       ? ""
       : "올바른 이메일을 입력해 주세요.",
-    emailConfirm:
-      orderForm.emailConfirm.trim() === orderForm.email.trim()
-        ? ""
-        : "이메일이 일치하지 않습니다.",
     cart: cartCount > 0 ? "" : "장바구니에 상품을 담아 주세요.",
   };
   const isOrderValid = Object.values(orderErrors).every((message) => !message);
@@ -162,9 +155,7 @@ function App() {
           </article>
         ) : (
           <p className="empty-state">
-            {isLoading
-              ? "추천 상품을 불러오는 중입니다."
-              : "추천 상품이 없습니다."}
+            {isLoading ? "추천 상품을 불러오는 중입니다." : "추천 상품이 없습니다."}
           </p>
         )}
       </section>
@@ -213,9 +204,7 @@ function App() {
           </p>
         ) : (
           <>
-            <p className="result-count">
-              검색 결과: {filteredProducts.length}개
-            </p>
+            <p className="result-count">검색 결과: {filteredProducts.length}개</p>
             {filteredProducts.length > 0 ? (
               <div className="product-grid">
                 {filteredProducts.map((product) => (
@@ -248,9 +237,7 @@ function App() {
           <>
             <ul className="cart-list">
               {cartItems.map((item) => {
-                const product = products.find(
-                  (entry) => entry.id === item.productId,
-                );
+                const product = products.find((entry) => entry.id === item.productId);
                 if (!product) return null;
                 return (
                   <li className="cart-item" key={item.productId}>
@@ -323,20 +310,6 @@ function App() {
               </p>
             )}
 
-            <label htmlFor="order-email-confirm">이메일 확인</label>
-            <input
-              id="order-email-confirm"
-              name="emailConfirm"
-              type="email"
-              value={orderForm.emailConfirm}
-              onChange={handleOrderChange}
-              aria-invalid={wasSubmitted && Boolean(orderErrors.emailConfirm)}
-            />
-            {wasSubmitted && orderErrors.emailConfirm && (
-              <p className="form-error" role="alert">{orderErrors.emailConfirm}</p>
-            )}
-
-
             {wasSubmitted && orderErrors.cart && (
               <p className="form-error" role="alert">
                 {orderErrors.cart}
@@ -357,18 +330,14 @@ function App() {
             ) : (
               <ul>
                 {cartItems.map((item) => {
-                  const product = products.find(
-                    (entry) => entry.id === item.productId,
-                  );
+                  const product = products.find((entry) => entry.id === item.productId);
                   if (!product) return null;
                   return (
                     <li key={item.productId}>
                       <span>
                         {product.name} × {item.quantity}
                       </span>
-                      <span>
-                        {(product.price * item.quantity).toLocaleString()}원
-                      </span>
+                      <span>{(product.price * item.quantity).toLocaleString()}원</span>
                     </li>
                   );
                 })}

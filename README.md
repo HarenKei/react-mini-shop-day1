@@ -1,142 +1,122 @@
-# React 쇼핑몰 프로젝트
+# React 쇼핑몰 프로젝트(3)
 
-2일차까지 구현한 React + FastAPI + PostgreSQL 실습 완성본입니다. 응용 실습의 상품 삭제, 전체 비우기, 이메일 확인, 두 종류의 빈 화면도 포함합니다.
+3일차 시작 코드입니다. 2일차 로컬 상품 변경과 이메일 확인 제거를 반영했습니다. React에는 아직 로그인과 주문 저장이 연결되지 않았습니다.
 
-## 강의자료
+## 강의자료와 시작 기준
 
+- [3일차 Figma Slides](https://www.figma.com/slides/kh0F44AWVdpGchEN08qXyp)
 - [1일차 PDF](<React 쇼핑몰 프로젝트 (1).pdf>)
 - [2일차 PDF, 84페이지](<React 쇼핑몰 프로젝트 (2).pdf>)
-- [2일차 Figma 자료](https://www.figma.com/slides/G8qbTpB6jYnAF8dTKkVZEq)
-- [1일차 코드와 자료](https://github.com/HarenKei/react-mini-shop-day1/tree/ebfbe0412ffc055fd7e0788a2f62b3a317721454)
+- [2일차 Figma Slides](https://www.figma.com/slides/G8qbTpB6jYnAF8dTKkVZEq)
+- [기존 2일차 완료 코드](https://github.com/HarenKei/react-mini-shop-day1/tree/5cc2742b9f7d74bb7ad0685d5732539dab9f8d06)
 
-현재 기본 브랜치의 코드는 2일차 완성본입니다. 1일차 시작 코드가 필요하면 위의 1일차 링크를 사용합니다.
+상품 조회는 `ORDER BY product_id DESC LIMIT 4`를 사용합니다. 승인한 상품 4개 입력과 `created_at` SQL을 포함하며, 이메일 확인 필드는 제거했습니다. 장바구니의 수량 변경, 상품 삭제, 전체 비우기는 유지합니다.
 
-## 구현 기능
+## 준비와 실행
 
-- 상품 검색, 카테고리 필터와 초기화
-- 상품 담기, 수량 증가와 감소, 수량 0인 상품 제거
-- 상품 한 종류 삭제, 전체 장바구니 비우기
-- 총 수량, 합계와 주문 요약 계산
-- 이름, 이메일, 이메일 확인과 빈 장바구니 검증
-- PostgreSQL 상품을 FastAPI로 조회하고 React에 표시
-- 로딩, 요청 오류, 등록 상품 없음, 검색 결과 없음 구분
-- Effect 요청 취소와 CORS 설정
-
-주문서의 입력 확인과 요약까지 구현되어 있습니다. 현재 코드의 상품 API는 조회 기능이며 주문 저장과 결제 기능은 포함되지 않습니다. 새로고침하면 장바구니와 주문 입력 State가 초기화됩니다.
-
-## 준비
-
-- Node.js 20.19 이상 또는 22.12 이상, npm
-- Python 3.13, PostgreSQL
-- Docker Desktop으로 실행한 PostgreSQL과 DBeaver 연결
-
-명령은 프로젝트 루트, 즉 package.json이 있는 폴더에서 실행합니다.
-
-### 1. React 패키지 설치
+Node.js 20.19 이상 또는 22.12 이상과 Python 3.13, PostgreSQL 17을 준비합니다. 아래 명령은 `package.json`이 있는 프로젝트 루트에서 실행합니다.
 
 ```sh
 npm ci
 ```
 
-### 2. 데이터베이스 준비
+`backend/.env.example`을 `backend/.env`로 복사합니다. DB 이름의 학생용 기본값은 `shop`입니다. DB 접속 정보는 자신의 PostgreSQL 설정으로 바꾸고, `SHOP_JWT_SECRET`에는 아래 명령으로 생성한 값을 넣습니다. 실제 비밀번호와 비밀키는 Git에 올리지 않습니다.
 
-DBeaver에서 기존 PostgreSQL 연결의 SQL 편집기를 열고 자동 커밋 상태에서 새 DB를 생성합니다.
-
-```sql
-CREATE DATABASE shop;
+```sh
+python -c "import secrets; print(secrets.token_hex(32))"
 ```
 
-생성 후 shop 데이터베이스에 연결해 아래 파일을 순서대로 실행합니다.
+Windows CMD에서는 위 명령의 `python`을 `py -3.13`으로 바꿀 수 있습니다.
 
-1. [상품 테이블 생성](sql/01-create-products.sql)
-2. [상품 3개 입력](sql/02-seed-products.sql)
-3. [응용 상품 추가와 조회](sql/03-exercise-product.sql) - 미니 파우치까지 확인할 때 한 번 실행
+Windows CMD — 첫 번째 터미널:
 
-shop이 이미 사용 중이면 새 이름으로 DB를 생성하고 .env의 SHOP_DB_NAME도 같은 이름으로 지정합니다. 기존 DB를 삭제할 필요가 없습니다. Docker의 호스트 포트와 계정은 DBeaver에서 연결된 실제 값을 사용합니다.
-
-### 3. DB 접속 정보
-
-`backend/.env.example`을 `backend/.env`로 복사하고 본인의 접속 정보로 수정합니다.
-
-```dotenv
-SHOP_DB_HOST=127.0.0.1
-SHOP_DB_PORT=5432
-SHOP_DB_NAME=shop
-SHOP_DB_USER=postgres
-SHOP_DB_PASSWORD=본인의_DB_비밀번호
+```cmd
+py -3.13 -m venv backend\.venv
+backend\.venv\Scripts\python.exe -m pip install -r backend\requirements-lock.txt
+backend\.venv\Scripts\python.exe -m uvicorn backend.main:app --reload
 ```
 
-.env에는 실제 비밀번호를 기록하므로 Git에 올리지 않습니다. 저장소에는 설정 예시만 제공합니다.
+Mac — 첫 번째 터미널:
 
-### 4. FastAPI 실행
+```sh
+python3.13 -m venv backend/.venv
+backend/.venv/bin/python -m pip install -r backend/requirements-lock.txt
+backend/.venv/bin/python -m uvicorn backend.main:app --reload
+```
+
+두 번째 터미널에서 React를 실행합니다.
+
+```sh
+npm run dev -- --port 5173 --strictPort
+```
+
+React 주소는 `http://localhost:5173`, API 문서는 `http://127.0.0.1:8000/docs`입니다. 가상환경이 생성되기 전에 비밀키를 만들 때 Mac에서는 `python3.13`을 사용합니다.
+
+## SQL 실행 순서
+
+서버는 테이블을 자동 생성하지 않습니다. DBeaver에서 실행할 DB 이름과 `public` 스키마를 먼저 확인합니다.
+
+| 시점 | 실행할 파일 |
+| --- | --- |
+| 처음 시작하는 빈 DB | `sql/01-create-products.sql`, `sql/02-seed-products.sql` |
+| 2일차에서 이어서 시작 | 기존 products 보존, 필요한 경우 `sql/04-add-created-at.sql` |
+| 1교시 | `sql/05-create-customers-sales.sql` |
+| 2교시 | `sql/06-create-orders.sql` |
+| 4교시 | `sql/07-verify-order.sql`의 123을 실제 주문번호로 변경해 조회 |
+
+상품 INSERT는 처음 한 번만 실행합니다. 기존 수업용 `shop`에 3일차 테이블을 미리 만들지 않고, 수업 중 CREATE 쿼리를 작성합니다. 별도 리허설은 `CREATE DATABASE shop_day3_rehearsal;`로 만든 DB에 연결해 진행하며 `.env`의 DB 이름도 함께 바꿉니다.
+
+계정 생성은 1교시 SQL을 실행한 다음 진행합니다. 같은 아이디로 다시 실행하면 기존 계정을 유지합니다. 비밀번호는 Argon2 해시로 저장합니다.
 
 Windows CMD:
 
 ```cmd
-py -3.13 -m venv backend\.venv
-backend\.venv\Scripts\python.exe -m pip install -r backend\requirements.txt
-backend\.venv\Scripts\python.exe -m uvicorn backend.main:app --reload
+backend\.venv\Scripts\python.exe -m backend.create_demo_user
 ```
 
-Mac 또는 Linux:
+Mac:
 
 ```sh
-python3.13 -m venv backend/.venv
-backend/.venv/bin/python -m pip install -r backend/requirements.txt
-backend/.venv/bin/python -m uvicorn backend.main:app --reload
+backend/.venv/bin/python -m backend.create_demo_user
 ```
 
-검증 당시 패키지 버전은 backend/requirements-lock.txt에 기록되어 있습니다. 동일한 버전으로 설치하려면 requirements.txt 대신 requirements-lock.txt를 지정합니다.
+## 동작과 확인
 
-서버 터미널을 켜 두고 다음 주소를 확인합니다.
+1. 상품을 담고 검색이나 메뉴를 바꿔도 장바구니가 유지되는지 확인합니다.
+2. 잘못된 비밀번호는 오류를 표시하고, 로그인 성공 후 회원 이름을 표시합니다.
+3. 주문 저장 단계부터 주문번호와 서버가 계산한 총액을 확인합니다. 정상 주문은 orders, sales, 재고가 함께 반영됩니다. 재고 부족이나 저장 오류는 전체 작업을 취소합니다.
+4. 화면 이동 단계부터 `/`, `/login`, `/cart`와 알 수 없는 주소 안내를 확인합니다. 로그인 성공 후 `/cart`로 이동합니다.
+5. 회원 정보 연결 단계에서 체크하면 회원 이름과 이메일을 읽기 전용으로 표시하고, 해제하면 직접 입력한 값을 복원합니다.
 
-- [서버 확인](http://127.0.0.1:8000/health): `{"status":"ok"}`
-- [상품 목록](http://127.0.0.1:8000/products): 상품 JSON 배열
-- [API 문서](http://127.0.0.1:8000/docs): 경로별 요청과 응답 확인
+JWT 만료 시간은 30분이며 메모리에 보관합니다. 새로고침하면 로그인과 장바구니가 초기화됩니다. 로그아웃이나 인증 만료 시 주문자 입력을 초기화합니다. 실제 결제 기능은 포함하지 않습니다.
 
-### 5. React 실행
+## 구현 파일
 
-새 터미널에서 실행합니다.
+- `src/App.jsx`: 공유 상태, 상품과 장바구니, 인증과 주문 화면
+- `src/main.jsx`: React 시작점, 화면 이동 단계부터 BrowserRouter
+- `src/components/`: 화면 이동의 ShopNav, 각 응용 브랜치의 표시 컴포넌트
+- `backend/main.py`: 상품 조회, 로그인과 회원 정보, 인증된 주문 API
+- `backend/create_demo_user.py`: 실습용 계정 생성
+- `backend/.env.example`: 학생용 접속 정보와 비밀키 예시
+- `sql/`: 수업 중 실행할 SQL
 
-```sh
-npm run dev
-```
-
-표시된 브라우저 주소를 엽니다. 기본 허용 출처는 `http://localhost:5173`과 `http://127.0.0.1:5173`입니다. Vite가 다른 포트를 사용하면 backend/main.py의 allow_origins에 실제 React 주소를 맞추거나, 5173 포트를 사용하던 본인의 서버를 종료한 뒤 다시 실행합니다.
-
-React의 상품 요청 주소는 `http://127.0.0.1:8000/products`입니다. 서버 주소를 바꾸면 src/App.jsx의 fetch 주소도 함께 변경합니다.
-
-## 동작 확인
-
-1. 토트백 2개와 머그컵 1개 담기: 총 3개, 48,000원.
-2. 검색 조건 변경: 장바구니와 합계 유지.
-3. 토트백 삭제: 머그컵 1개, 12,000원. 전체 비우기: 빈 장바구니.
-4. 이름과 서로 다른 두 이메일로 입력 확인: 이메일 불일치 오류. 같은 이메일로 수정: 오류 해제.
-5. 서버 중지 후 React 새로고침: 조회 오류 안내. 서버 재시작 후 새로고침: 상품 표시.
-6. 존재하지 않는 검색어: 조건에 맞는 상품 없음. API가 빈 배열을 반환하면 등록된 상품 없음.
-
-## 파일 구성
-
-```text
-src/                         React 화면과 스타일
-backend/main.py              FastAPI 상품 조회와 CORS
-backend/.env.example         DB 접속 설정 예시
-backend/requirements.txt     Python 패키지 목록
-backend/requirements-lock.txt 검증 당시 패키지 버전
-sql/                         테이블 생성, 상품 입력, 응용 SQL
-React 쇼핑몰 프로젝트 (1).pdf
-React 쇼핑몰 프로젝트 (2).pdf
-```
-
-## 오류 확인
-
-- 서버가 시작되지 않으면 가상환경의 Python, 현재 폴더와 터미널 오류부터 확인합니다.
-- health는 되지만 products가 실패하면 .env, PostgreSQL 실행, 포트와 DB 이름, products 테이블을 확인합니다.
-- API는 정상인데 React가 실패하면 실제 React 출처와 CORS 설정을 확인합니다.
-- `.env` 수정 후에는 FastAPI를 종료하고 다시 실행합니다.
-
-## 프로덕션 빌드
+빌드 확인:
 
 ```sh
 npm run build
 ```
+
+## 오류 확인
+
+- 상품 API가 실패하면 PostgreSQL 실행 상태와 `.env`의 DB 이름, 포트, products 테이블을 확인합니다.
+- `.env`를 수정했으면 FastAPI를 다시 실행합니다.
+- API는 되지만 React 요청이 실패하면 React 주소와 CORS의 5173 포트를 확인합니다.
+- 401 응답은 다시 로그인하고, 409 응답은 DB 재고를 확인합니다.
+- 수업용 DB를 유지하면서 재고와 오류를 반복 검증하려면 별도 리허설 DB를 사용합니다.
+
+## 공식 문서
+
+- [FastAPI JWT 인증](https://fastapi.tiangolo.com/tutorial/security/oauth2-jwt/)
+- [Psycopg 트랜잭션](https://www.psycopg.org/psycopg3/docs/basic/transactions.html)
+- [React Props](https://react.dev/learn/passing-props-to-a-component)
+- [React Router 화면 이동](https://reactrouter.com/start/declarative/navigating)

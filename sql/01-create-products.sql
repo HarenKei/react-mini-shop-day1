@@ -3,5 +3,6 @@ CREATE TABLE public.products (
   name TEXT NOT NULL,
   category TEXT NOT NULL,
   price NUMERIC(10, 2) NOT NULL CHECK (price >= 0),
-  stock_quantity INTEGER NOT NULL CHECK (stock_quantity >= 0)
+  stock_quantity INTEGER NOT NULL CHECK (stock_quantity >= 0),
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
