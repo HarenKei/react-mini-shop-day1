@@ -503,3 +503,28 @@ button {
   outline: 2px solid #371080;
   outline-offset: 2px;
 }
+
+.order-form .member-info-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.order-form .member-info-option input {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  padding: 0;
+  accent-color: #6d28d9;
+}
+
+.member-info-help {
+  margin: 0 0 18px;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.order-form input[readonly] {
+  background: #f5f3ff;
+}

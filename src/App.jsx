@@ -18,6 +18,7 @@ function App() {
     name: "",
     email: "",
   });
+  const [useMemberInfo, setUseMemberInfo] = useState(false);
   const [wasSubmitted, setWasSubmitted] = useState(false);
 
   const [loginForm, setLoginForm] = useState({ userid: "", password: "" });
@@ -148,8 +149,8 @@ function App() {
           Authorization: `Bearer ${accessToken}`,
         },
         body: JSON.stringify({
-          name: orderForm.name.trim(),
-          email: orderForm.email.trim(),
+          name: orderName.trim(),
+          email: orderEmail.trim(),
           items: cartItems.map((item) => ({
             product_id: item.productId,
             quantity: item.quantity,
@@ -161,6 +162,10 @@ function App() {
       if (response.status === 401) {
         setAccessToken(null);
         setCurrentUser(null);
+        setUseMemberInfo(false);
+        setOrderForm({ name: "", email: "" });
+        setOrderResult(null);
+        setWasSubmitted(false);
         throw new Error("로그인이 만료되었습니다. 다시 로그인해 주세요.");
       }
       if (!response.ok) {
@@ -228,6 +233,10 @@ function App() {
     } catch (error) {
       setAccessToken(null);
       setCurrentUser(null);
+      setUseMemberInfo(false);
+      setOrderForm({ name: "", email: "" });
+      setOrderResult(null);
+      setWasSubmitted(false);
       setLoginError(error.message);
       setLoginForm((current) => ({ ...current, password: "" }));
     } finally {
@@ -238,6 +247,10 @@ function App() {
   function handleLogout() {
     setAccessToken(null);
     setCurrentUser(null);
+    setUseMemberInfo(false);
+    setOrderForm({ name: "", email: "" });
+    setOrderResult(null);
+    setWasSubmitted(false);
     setLoginError("");
     navigate("/login");
   }
@@ -248,9 +261,12 @@ function App() {
     return total + (product?.price ?? 0) * item.quantity;
   }, 0);
 
+  const orderName = useMemberInfo && currentUser ? currentUser.name : orderForm.name;
+  const orderEmail = useMemberInfo && currentUser ? currentUser.email : orderForm.email;
+
   const orderErrors = {
-    name: orderForm.name.trim() ? "" : "이름을 입력해 주세요.",
-    email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(orderForm.email.trim())
+    name: orderName.trim() ? "" : "이름을 입력해 주세요.",
+    email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(orderEmail.trim())
       ? ""
       : "올바른 이메일을 입력해 주세요.",
     cart: cartCount > 0 ? "" : "장바구니에 상품을 담아 주세요.",
@@ -480,11 +496,25 @@ function App() {
                       onSubmit={handleOrderSubmit}
                     >
                       <h3>주문자 정보</h3>
+                      <label className="member-info-option" htmlFor="use-member-info">
+                        <input
+                          id="use-member-info"
+                          type="checkbox"
+                          checked={useMemberInfo}
+                          onChange={(event) => setUseMemberInfo(event.target.checked)}
+                        />
+                        회원 정보 불러오기
+                      </label>
+                      <p className="member-info-help">
+                        체크하면 회원 이름과 이메일을 사용합니다. 해제하면 직접 입력하던
+                        값으로 돌아갑니다.
+                      </p>
                       <label htmlFor="order-name">이름</label>
                       <input
                         id="order-name"
                         name="name"
-                        value={orderForm.name}
+                        value={orderName}
+                        readOnly={useMemberInfo}
                         onChange={handleOrderChange}
                         aria-invalid={wasSubmitted && Boolean(orderErrors.name)}
                       />
@@ -499,7 +529,8 @@ function App() {
                         id="order-email"
                         name="email"
                         type="email"
-                        value={orderForm.email}
+                        value={orderEmail}
+                        readOnly={useMemberInfo}
                         onChange={handleOrderChange}
                         aria-invalid={wasSubmitted && Boolean(orderErrors.email)}
                       />
