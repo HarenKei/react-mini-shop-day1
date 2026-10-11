@@ -469,6 +469,66 @@ button {
   margin: 0;
 }
 
+.order-form button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.shop-nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 1rem 0 1.5rem;
+}
+
+.shop-nav a {
+  padding: 0.65rem 1rem;
+  border: 1px solid #ded7ec;
+  border-radius: 999px;
+  color: #372c4a;
+  text-decoration: none;
+  background: #fff;
+}
+
+.shop-nav a:hover,
+.shop-nav a:focus-visible,
+.shop-nav a.active {
+  color: #fff;
+  background: #6d28d9;
+  border-color: #6d28d9;
+}
+
+.shop-nav a:focus-visible {
+  outline: 2px solid #371080;
+  outline-offset: 2px;
+}
+
+.order-form .member-info-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.order-form .member-info-option input {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  padding: 0;
+  accent-color: #6d28d9;
+}
+
+.member-info-help {
+  margin: 0 0 18px;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.order-form input[readonly] {
+  background: #f5f3ff;
+}
+
 .welcome-message {
   padding: 12px;
   background: #f5f3ff;
@@ -477,4 +537,24 @@ button {
 .welcome-message.signed-in {
   background: #ecfdf5;
   color: #166534;
+}
+
+.order-success-card {
+  margin-top: 20px;
+  padding: 16px;
+  border: 2px solid #166534;
+  border-radius: 12px;
+  background: #ecfdf5;
+  color: #166534;
+}
+.order-success-card h3 {
+  margin: 0 0 12px;
+}
+
+.shop-nav a.active {
+  background: #0f766e;
+  border-color: #0f766e;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 4px;
 }
