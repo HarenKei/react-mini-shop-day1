@@ -468,3 +468,8 @@ button {
 .auth-signed-in p {
   margin: 0;
 }
+
+.order-form button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}

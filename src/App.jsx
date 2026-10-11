@@ -23,6 +23,10 @@ function App() {
   const [loginError, setLoginError] = useState("");
   const [isLoggingIn, setIsLoggingIn] = useState(false);
 
+  const [isSubmittingOrder, setIsSubmittingOrder] = useState(false);
+  const [orderError, setOrderError] = useState("");
+  const [orderResult, setOrderResult] = useState(null);
+
   const featuredProduct = products[0];
   const categories = [
     "전체",
@@ -120,9 +124,58 @@ function App() {
     setOrderForm((currentForm) => ({ ...currentForm, [name]: value }));
   }
 
-  function handleOrderSubmit(event) {
+  async function handleOrderSubmit(event) {
     event.preventDefault();
     setWasSubmitted(true);
+    setOrderError("");
+    setOrderResult(null);
+
+    if (!isOrderValid) return;
+    if (!accessToken) {
+      setOrderError("주문하려면 먼저 로그인해 주세요.");
+      return;
+    }
+
+    setIsSubmittingOrder(true);
+    try {
+      const response = await fetch("http://127.0.0.1:8000/orders", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({
+          name: orderForm.name.trim(),
+          email: orderForm.email.trim(),
+          items: cartItems.map((item) => ({
+            product_id: item.productId,
+            quantity: item.quantity,
+          })),
+        }),
+      });
+
+      const data = await response.json().catch(() => ({}));
+      if (response.status === 401) {
+        setAccessToken(null);
+        setCurrentUser(null);
+        throw new Error("로그인이 만료되었습니다. 다시 로그인해 주세요.");
+      }
+      if (!response.ok) {
+        throw new Error(
+          typeof data.detail === "string"
+            ? data.detail
+            : `주문을 저장하지 못했습니다 (${response.status}).`,
+        );
+      }
+
+      setOrderResult(data);
+      setCartItems([]);
+      setWasSubmitted(false);
+    } catch (error) {
+      setOrderError(error.message || "서버 연결을 확인해 주세요.");
+    } finally {
+      setIsSubmittingOrder(false);
+    }
   }
 
   function handleLoginChange(event) {
@@ -388,7 +441,7 @@ function App() {
         )}
       </section>
       <section className="order-section" aria-labelledby="order-title">
-        <h2 id="order-title">주문서 미리 보기</h2>
+        <h2 id="order-title">주문서</h2>
         <div className="order-layout">
           <form className="order-form" noValidate onSubmit={handleOrderSubmit}>
             <h3>주문자 정보</h3>
@@ -426,10 +479,18 @@ function App() {
                 {orderErrors.cart}
               </p>
             )}
-            <button type="submit">입력 확인</button>
-            {wasSubmitted && isOrderValid && (
+            <button type="submit" disabled={isSubmittingOrder}>
+              {isSubmittingOrder ? "주문 저장 중..." : "주문하기"}
+            </button>
+            {orderError && (
+              <p className="form-error" role="alert">
+                {orderError}
+              </p>
+            )}
+            {orderResult && (
               <p className="form-success" role="status">
-                입력 확인 완료! 실제 주문 저장은 9차시에 연결합니다.
+                주문 #{orderResult.order_id} 저장 완료 · 총액{" "}
+                {orderResult.total_price.toLocaleString()}원
               </p>
             )}
           </form>
