@@ -1,6 +1,14 @@
 # React 쇼핑몰 프로젝트(3)
 
-1교시 완료 코드입니다. JWT 로그인과 회원 정보 조회를 React에 연결했습니다. 주문 저장과 라우팅은 다음 단계에서 연결합니다.
+1교시 응용: 기존 currentUser를 Props로 전달해 로그인 전후 환영 문구와 스타일을 바꿉니다. 별도 인증 상태, API와 DB 구조는 추가하지 않습니다.
+
+## 응용 기준
+
+브랜치: `codex/day3-lesson8-welcome`
+
+기준 커밋: [04122e9bc1df6152c3aef8c0b39e6cc1002ac6d1](https://github.com/HarenKei/react-mini-shop-day1/commit/04122e9bc1df6152c3aef8c0b39e6cc1002ac6d1)
+
+해당 교시 기본 완료 코드에서 이 응용의 표시 변경만 추가했습니다. 기본 코드로 돌아갈 때는 위 기준 커밋을 사용합니다.
 
 ## 강의자료와 시작 기준
 

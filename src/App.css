@@ -468,3 +468,13 @@ button {
 .auth-signed-in p {
   margin: 0;
 }
+
+.welcome-message {
+  padding: 12px;
+  background: #f5f3ff;
+  color: #4c1d95;
+}
+.welcome-message.signed-in {
+  background: #ecfdf5;
+  color: #166534;
+}

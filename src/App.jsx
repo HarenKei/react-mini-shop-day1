@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import "./App.css";
+import WelcomeMessage from "./components/WelcomeMessage";
 import ProductCard from "./components/ProductCard";
 
 function App() {
@@ -209,11 +210,9 @@ function App() {
 
       <section className="auth-section" aria-labelledby="auth-title">
         <h2 id="auth-title">고객 로그인</h2>
+        <WelcomeMessage user={accessToken ? currentUser : null} />
         {accessToken && currentUser ? (
           <div className="auth-signed-in">
-            <p>
-              <strong>{currentUser.name}</strong>님, 환영합니다.
-            </p>
             <button type="button" onClick={handleLogout}>
               로그아웃
             </button>
