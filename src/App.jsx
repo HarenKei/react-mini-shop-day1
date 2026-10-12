@@ -2,7 +2,11 @@ import { useEffect, useState } from "react";
 import "./App.css";
 import { Routes, Route, Link, useNavigate } from "react-router";
 import ShopNav from "./components/ShopNav";
-import ProductCard from "./components/ProductCard";
+import AuthSection from "./components/sections/AuthSection";
+import FeaturedSection from "./components/sections/FeaturedSection";
+import ProductListSection from "./components/sections/ProductListSection";
+import CartSection from "./components/sections/CartSection";
+import OrderSection from "./components/sections/OrderSection";
 
 function App() {
   const shopName = "오늘의 상점";
@@ -115,6 +119,10 @@ function App() {
         )
         .filter((item) => item.quantity > 0),
     );
+  }
+
+  function clearCart() {
+    setCartItems([]);
   }
 
   function removeFromCart(productId) {
@@ -285,144 +293,40 @@ function App() {
         <Route
           path="/login"
           element={
-            <section className="auth-section" aria-labelledby="auth-title">
-              <h2 id="auth-title">고객 로그인</h2>
-              {accessToken && currentUser ? (
-                <div className="auth-signed-in">
-                  <p>
-                    <strong>{currentUser.name}</strong>님, 환영합니다.
-                  </p>
-                  <button type="button" onClick={handleLogout}>
-                    로그아웃
-                  </button>
-                </div>
-              ) : (
-                <form className="auth-form" noValidate onSubmit={handleLoginSubmit}>
-                  <div>
-                    <label htmlFor="login-userid">아이디</label>
-                    <input
-                      id="login-userid"
-                      name="userid"
-                      autoComplete="username"
-                      value={loginForm.userid}
-                      onChange={handleLoginChange}
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="login-password">비밀번호</label>
-                    <input
-                      id="login-password"
-                      name="password"
-                      type="password"
-                      autoComplete="current-password"
-                      value={loginForm.password}
-                      onChange={handleLoginChange}
-                    />
-                  </div>
-                  <button type="submit" disabled={isLoggingIn}>
-                    {isLoggingIn ? "확인 중..." : "로그인"}
-                  </button>
-                  {loginError && (
-                    <p className="form-error" role="alert">
-                      {loginError}
-                    </p>
-                  )}
-                </form>
-              )}
-            </section>
+            <AuthSection
+              accessToken={accessToken}
+              currentUser={currentUser}
+              loginForm={loginForm}
+              loginError={loginError}
+              isLoggingIn={isLoggingIn}
+              handleLoginChange={handleLoginChange}
+              handleLoginSubmit={handleLoginSubmit}
+              handleLogout={handleLogout}
+            />
           }
         />
         <Route
           path="/"
           element={
             <>
-              <section className="featured-section">
-                <h2>오늘의 추천 상품</h2>
-                {featuredProduct ? (
-                  <article className="featured-product">
-                    <div role="img" aria-label={`${featuredProduct.name} 상품 이미지`}>
-                      {featuredProduct.emoji}
-                    </div>
-                    <h3>{featuredProduct.name}</h3>
-                    <p>{featuredProduct.price.toLocaleString()}원</p>
-                    <button type="button">상품 보러 가기</button>
-                  </article>
-                ) : (
-                  <p className="empty-state">
-                    {isLoading
-                      ? "추천 상품을 불러오는 중입니다."
-                      : "추천 상품이 없습니다."}
-                  </p>
-                )}
-              </section>
+              <FeaturedSection
+                featuredProduct={featuredProduct}
+                isLoading={isLoading}
+              />
 
-              <section aria-labelledby="all-products-title">
-                <h2 id="all-products-title">전체 상품</h2>
-                <div className="filter-panel">
-                  <div className="filter-field">
-                    <label htmlFor="product-search">상품 검색</label>
-                    <input
-                      id="product-search"
-                      type="search"
-                      placeholder="상품 이름을 입력하세요"
-                      value={searchTerm}
-                      onChange={(event) => setSearchTerm(event.target.value)}
-                    />
-                  </div>
-
-                  <div className="filter-field">
-                    <label htmlFor="category-select">카테고리</label>
-                    <select
-                      id="category-select"
-                      value={selectedCategory}
-                      onChange={(event) => setSelectedCategory(event.target.value)}
-                    >
-                      {categories.map((category) => (
-                        <option key={category} value={category}>
-                          {category}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <button className="reset-button" type="button" onClick={resetFilters}>
-                    초기화
-                  </button>
-                </div>
-
-                {isLoading ? (
-                  <p className="api-status" role="status">
-                    상품을 불러오는 중입니다.
-                  </p>
-                ) : productError ? (
-                  <p className="api-status api-error" role="alert">
-                    상품을 불러오지 못했습니다: {productError}
-                  </p>
-                ) : (
-                  <>
-                    <p className="result-count">
-                      검색 결과: {filteredProducts.length}개
-                    </p>
-                    {filteredProducts.length > 0 ? (
-                      <div className="product-grid">
-                        {filteredProducts.map((product) => (
-                          <ProductCard
-                            key={product.id}
-                            product={product}
-                            onAddToCart={addToCart}
-                          />
-                        ))}
-                      </div>
-                    ) : (
-                      <p className="empty-state">
-                        {products.length === 0
-                          ? "등록된 상품이 없습니다."
-                          : "조건에 맞는 상품이 없습니다."}
-                      </p>
-                    )}
-                  </>
-                )}
-              </section>
+              <ProductListSection
+                products={products}
+                filteredProducts={filteredProducts}
+                categories={categories}
+                searchTerm={searchTerm}
+                selectedCategory={selectedCategory}
+                isLoading={isLoading}
+                productError={productError}
+                setSearchTerm={setSearchTerm}
+                setSelectedCategory={setSelectedCategory}
+                resetFilters={resetFilters}
+                addToCart={addToCart}
+              />
             </>
           }
         />
@@ -430,167 +334,34 @@ function App() {
           path="/cart"
           element={
             <>
-              <section className="cart-section" aria-labelledby="cart-title">
-                <h2 id="cart-title">장바구니 ({cartCount}개)</h2>
-                <button type="button" onClick={() => setCartItems([])}>
-                  장바구니 비우기
-                </button>
-
-                {cartItems.length === 0 ? (
-                  <p className="empty-state">아직 담은 상품이 없습니다.</p>
-                ) : (
-                  <>
-                    <ul className="cart-list">
-                      {cartItems.map((item) => {
-                        const product = products.find(
-                          (entry) => entry.id === item.productId,
-                        );
-                        if (!product) return null;
-                        return (
-                          <li className="cart-item" key={item.productId}>
-                            <div>
-                              <strong>{product.name}</strong>
-                              <p>
-                                {product.price.toLocaleString()}원 × {item.quantity}
-                              </p>
-                            </div>
-                            <div className="quantity-controls">
-                              <button
-                                type="button"
-                                onClick={() => removeFromCart(product.id)}
-                              >
-                                삭제
-                              </button>
-
-                              <button
-                                type="button"
-                                aria-label={`${product.name} 수량 줄이기`}
-                                onClick={() => decreaseQuantity(product.id)}
-                              >
-                                −
-                              </button>
-                              <span>{item.quantity}</span>
-                              <button
-                                type="button"
-                                aria-label={`${product.name} 수량 늘리기`}
-                                onClick={() => addToCart(product.id)}
-                              >
-                                +
-                              </button>
-                            </div>
-                          </li>
-                        );
-                      })}
-                    </ul>
-                    <p className="cart-total">합계: {cartTotal.toLocaleString()}원</p>
-                  </>
-                )}
-              </section>
+              <CartSection
+                products={products}
+                cartItems={cartItems}
+                cartCount={cartCount}
+                cartTotal={cartTotal}
+                addToCart={addToCart}
+                decreaseQuantity={decreaseQuantity}
+                removeFromCart={removeFromCart}
+                clearCart={clearCart}
+              />
               {accessToken && currentUser ? (
-                <section className="order-section" aria-labelledby="order-title">
-                  <h2 id="order-title">주문서</h2>
-                  <div className="order-layout">
-                    <form
-                      className="order-form"
-                      noValidate
-                      onSubmit={handleOrderSubmit}
-                    >
-                      <h3>주문자 정보</h3>
-                      <label className="member-info-option" htmlFor="use-member-info">
-                        <input
-                          id="use-member-info"
-                          type="checkbox"
-                          checked={useMemberInfo}
-                          onChange={(event) => setUseMemberInfo(event.target.checked)}
-                        />
-                        회원 정보 불러오기
-                      </label>
-                      <p className="member-info-help">
-                        체크하면 회원 이름과 이메일을 사용합니다. 해제하면 직접 입력하던
-                        값으로 돌아갑니다.
-                      </p>
-                      <label htmlFor="order-name">이름</label>
-                      <input
-                        id="order-name"
-                        name="name"
-                        value={orderName}
-                        readOnly={useMemberInfo}
-                        onChange={handleOrderChange}
-                        aria-invalid={wasSubmitted && Boolean(orderErrors.name)}
-                      />
-                      {wasSubmitted && orderErrors.name && (
-                        <p className="form-error" role="alert">
-                          {orderErrors.name}
-                        </p>
-                      )}
-
-                      <label htmlFor="order-email">이메일</label>
-                      <input
-                        id="order-email"
-                        name="email"
-                        type="email"
-                        value={orderEmail}
-                        readOnly={useMemberInfo}
-                        onChange={handleOrderChange}
-                        aria-invalid={wasSubmitted && Boolean(orderErrors.email)}
-                      />
-                      {wasSubmitted && orderErrors.email && (
-                        <p className="form-error" role="alert">
-                          {orderErrors.email}
-                        </p>
-                      )}
-
-                      {wasSubmitted && orderErrors.cart && (
-                        <p className="form-error" role="alert">
-                          {orderErrors.cart}
-                        </p>
-                      )}
-                      <button type="submit" disabled={isSubmittingOrder}>
-                        {isSubmittingOrder ? "주문 저장 중..." : "주문하기"}
-                      </button>
-                      {orderError && (
-                        <p className="form-error" role="alert">
-                          {orderError}
-                        </p>
-                      )}
-                      {orderResult && (
-                        <p className="form-success" role="status">
-                          주문 #{orderResult.order_id} 저장 완료 · 총액{" "}
-                          {orderResult.total_price.toLocaleString()}원
-                        </p>
-                      )}
-                    </form>
-
-                    <div className="order-summary">
-                      <h3>주문 요약</h3>
-                      {cartItems.length === 0 ? (
-                        <p>담은 상품이 없습니다.</p>
-                      ) : (
-                        <ul>
-                          {cartItems.map((item) => {
-                            const product = products.find(
-                              (entry) => entry.id === item.productId,
-                            );
-                            if (!product) return null;
-                            return (
-                              <li key={item.productId}>
-                                <span>
-                                  {product.name} × {item.quantity}
-                                </span>
-                                <span>
-                                  {(product.price * item.quantity).toLocaleString()}원
-                                </span>
-                              </li>
-                            );
-                          })}
-                        </ul>
-                      )}
-                      <p className="order-total">
-                        상품 {cartCount}개 · 합계 {cartTotal.toLocaleString()}원
-                      </p>
-                    </div>
-                  </div>
-                </section>
+                <OrderSection
+                  products={products}
+                  cartItems={cartItems}
+                  cartCount={cartCount}
+                  cartTotal={cartTotal}
+                  useMemberInfo={useMemberInfo}
+                  setUseMemberInfo={setUseMemberInfo}
+                  orderName={orderName}
+                  orderEmail={orderEmail}
+                  orderErrors={orderErrors}
+                  wasSubmitted={wasSubmitted}
+                  isSubmittingOrder={isSubmittingOrder}
+                  orderError={orderError}
+                  orderResult={orderResult}
+                  handleOrderChange={handleOrderChange}
+                  handleOrderSubmit={handleOrderSubmit}
+                />
               ) : (
                 <p className="empty-state">
                   주문하려면 <Link to="/login">로그인</Link>해 주세요.

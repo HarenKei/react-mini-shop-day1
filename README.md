@@ -7,7 +7,7 @@
 - [3일차 Figma Slides](https://www.figma.com/slides/kh0F44AWVdpGchEN08qXyp)
 - [1일차 PDF](<React 쇼핑몰 프로젝트 (1).pdf>)
 - [2일차 PDF, 84페이지](<React 쇼핑몰 프로젝트 (2).pdf>)
-- [3일차 PDF](<React 쇼핑몰 프로젝트 (3).pdf>)
+- [3일차 PDF, 141페이지](<React 쇼핑몰 프로젝트 (3).pdf>)
 - [2일차 Figma Slides](https://www.figma.com/slides/G8qbTpB6jYnAF8dTKkVZEq)
 - [기존 2일차 완료 코드](https://github.com/HarenKei/react-mini-shop-day1/tree/5cc2742b9f7d74bb7ad0685d5732539dab9f8d06)
 
@@ -66,7 +66,7 @@ React 주소는 `http://localhost:5173`, API 문서는 `http://127.0.0.1:8000/do
 | 처음 시작하는 빈 DB | products 테이블과 네 상품 준비 |
 | 2일차에서 이어서 시작 | 기존 products와 상품 데이터 유지 |
 | 1교시 | customers와 sales 생성, 기본키와 외래키 연결 |
-| 2교시 | orders 생성, sales에 order_id 추가 |
+| 3교시 | orders 생성, sales에 order_id 추가 |
 | 4교시 | 실제 주문번호로 주문·판매 행과 재고 대조 |
 
 상품 INSERT는 처음 한 번만 실행합니다. 수업용 shop의 테이블은 수업 중 학생들과 CREATE 쿼리를 작성하며 준비합니다. 별도 리허설은 shop_day3_rehearsal DB에 연결하고 .env의 DB 이름도 함께 바꿉니다.
@@ -125,7 +125,7 @@ CREATE TABLE public.sales (
 
 ```
 
-2교시 주문 테이블과 판매 행 연결:
+3교시 주문 테이블과 판매 행 연결:
 
 ```sql
 CREATE TABLE IF NOT EXISTS public.orders (
@@ -183,11 +183,40 @@ backend/.venv/bin/python -m backend.create_demo_user
 
 JWT 만료 시간은 30분이며 메모리에 보관합니다. 새로고침하면 로그인과 장바구니가 초기화됩니다. 로그아웃이나 인증 만료 시 주문자 입력을 초기화합니다. 실제 결제 기능은 포함하지 않습니다.
 
+## 보충 실습: App 컴포넌트 조합
+
+Figma와 PDF의 106–140페이지에서 로그인·추천 상품·상품 목록·장바구니·주문서를 분리합니다. 진행 시간은 지정하지 않습니다. 141페이지는 기존 4교시 핵심 정리입니다. 43페이지에는 orders 생성과 sales.order_id 연결 SQL이 있습니다.
+
+- [분리 전 기본 완성본](https://github.com/HarenKei/react-mini-shop-day1/tree/10f78776f9f22151ebd9a790c05765e5eefacb15)
+- [컴포넌트 분리 실습 완성본](https://github.com/HarenKei/react-mini-shop-day1/tree/codex/day3-component-composition)
+
+main도 분리 완성본입니다. 앞선 강의의 추가·교체 코드를 연습할 때는 분리 전 기본 완성본을 기준으로 시작합니다. 기존 세 응용 브랜치는 각 기능 완료 단계에서 독립적으로 연습하는 예제이며 컴포넌트 분리 전 구조를 유지합니다.
+
+| 컴포넌트 | 책임 |
+| --- | --- |
+| AuthSection | 로그인 폼·오류·회원 표시·로그아웃 |
+| FeaturedSection | 추천 상품·로딩·빈 상태 |
+| ProductListSection | 검색·필터·상품 목록·조회 오류 |
+| CartSection | 수량 변경·삭제·전체 비우기·합계 |
+| OrderSection | 회원 정보 선택·입력 검증·주문 결과·요약 |
+
+상태, 파생 값, 검증과 API 요청은 App에 유지합니다. 자식은 필요한 값과 이벤트 함수를 Props로 받고 화면을 표시합니다. ProductCard는 ProductListSection에서 사용하며 공통 헤더와 ShopNav는 App에서 조합합니다. 로그인 조건, 장바구니 유지, 이메일 확인 제거와 기존 CSS는 그대로입니다.
+
+실습 순서:
+
+1. sections 폴더의 다섯 새 파일을 만들고 각 파일의 모든 부분을 순서대로 연결해 저장합니다.
+2. App의 ProductCard import를 다섯 영역 import로 교체하고 clearCart 함수를 추가합니다.
+3. 각 기존 section의 시작부터 닫는 태그까지 해당 컴포넌트 호출로 교체합니다. 함수·상태와 라우트 조건은 유지합니다.
+4. 상품·장바구니·로그인·회원 정보·주문 화면이 분리 전과 동일하게 동작하는지 확인합니다.
+
+빌드와 API 응답 재현을 통한 분리 전후 화면 검증을 통과했습니다. 수업용 DB는 변경하지 않았습니다.
+
 ## 구현 파일
 
-- `src/App.jsx`: 공유 상태, 상품과 장바구니, 인증과 주문 화면
+- `src/App.jsx`: 공유 상태, 계산·검증·API 요청, 라우트별 화면 조합
 - `src/main.jsx`: React 시작점, 화면 이동 단계부터 BrowserRouter
-- `src/components/`: 화면 이동의 ShopNav, 각 응용 브랜치의 표시 컴포넌트
+- `src/components/`: ShopNav, ProductCard와 응용 브랜치의 표시 컴포넌트
+- `src/components/sections/`: AuthSection, FeaturedSection, ProductListSection, CartSection, OrderSection
 - `backend/main.py`: 상품 조회, 로그인과 회원 정보, 인증된 주문 API
 - `backend/create_demo_user.py`: 실습용 계정 생성
 - `backend/.env.example`: 학생용 접속 정보와 비밀키 예시
