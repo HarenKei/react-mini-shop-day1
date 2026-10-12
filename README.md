@@ -7,6 +7,7 @@
 - [3일차 Figma Slides](https://www.figma.com/slides/kh0F44AWVdpGchEN08qXyp)
 - [1일차 PDF](<React 쇼핑몰 프로젝트 (1).pdf>)
 - [2일차 PDF, 84페이지](<React 쇼핑몰 프로젝트 (2).pdf>)
+- [3일차 PDF](<React 쇼핑몰 프로젝트 (3).pdf>)
 - [2일차 Figma Slides](https://www.figma.com/slides/G8qbTpB6jYnAF8dTKkVZEq)
 - [기존 2일차 완료 코드](https://github.com/HarenKei/react-mini-shop-day1/tree/5cc2742b9f7d74bb7ad0685d5732539dab9f8d06)
 
